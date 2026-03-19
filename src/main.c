@@ -17,7 +17,7 @@ void decode_execute(uint8_t op,uint8_t a,uint8_t b){
 		case 0x02: mem[b]= rg[a]; break;
 		case 0x03: rg[a] = rg[a] + rg[b]; break;
 		case 0x04: rg[a] = rg[a] - rg[b]; break;
-		case 0x05: rg[a] = mem[b]; break;
+		case 0x05: rg[a] = b; break;
 		case 0x06: flag = (rg[a] == rg[b]) ? 1 : 0; break;
 		case 0x07: pc = a; break;
 		case 0x08: if(flag) pc = a; break;
@@ -37,8 +37,10 @@ void trace(uint8_t op, uint8_t a, uint8_t b) {
 }
 
 void linearSearch(void){
-	mem[0x00] = 0x05; 
-
+	mem[0x00] = 0x05; mem[0x01] = 0x00; mem[0x02] = 0x10;
+	mem[0x03] = 0x05; mem[0x04] = 0x01; mem[0x05] = 0x00;
+	
+	mem[0x06] = 0x02; mem[0x07] = rg[0x01]; mem[0x08] = rg[0x02];
 
 
 }
