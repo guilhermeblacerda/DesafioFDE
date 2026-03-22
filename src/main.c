@@ -76,11 +76,21 @@ void linearSearch(void){
     //valor para verificar
     mem[posicao+39] = MOV; mem[posicao+40] = R0; mem[posicao+41] = 0x38; 
     mem[posicao+42] = STORE; mem[posicao+43] = R0; mem[posicao+44] = 0x08;
-    
 
-    mem[posicao] = HALT; // HALT após preencher
+    // loop principal de busca
+    mem[posicao+45] = MOV;   mem[posicao+46] = R1; mem[posicao+47] = 0x10;
+    mem[posicao+48] = LOAD;  mem[posicao+49] = R0; mem[posicao+50] = 0x08; 
 
+    mem[posicao+51] = LOAD;  mem[posicao+52] = R3; mem[posicao+53] = R1;   
+    mem[posicao+54] = CMP;   mem[posicao+55] = R3; mem[posicao+56] = R0;   
+    mem[posicao+57] = JZ;    mem[posicao+58] = posicao+69; mem[posicao+59] = 0x00; 
 
+    mem[posicao+60] = ADD;   mem[posicao+61] = R1; mem[posicao+62] = 0x01; 
+    mem[posicao+63] = CMP;   mem[posicao+64] = R1; mem[posicao+65] = R2;   
+    mem[posicao+66] = JNZ;   mem[posicao+67] = posicao+51; mem[posicao+68] = 0x00; 
+    // fim do loop de busca 
+
+    mem[posicao+69] = HALT;   mem[posicao+70] = 0x00; mem[posicao+71] = 0x00;
 
 }
 
