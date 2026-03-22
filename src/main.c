@@ -37,33 +37,29 @@ void trace(uint8_t op, uint8_t a, uint8_t b) {
 }
 
 void linearSearch(void){
-	mem[0x08] = 56;                        
-    mem[0x10] = 12; mem[0x11] = 34; mem[0x12] = 56; mem[0x13] = 78;
-	mem[0x14] = 90; mem[0x15] = 11; mem[0x16] = 22; mem[0x17] = 33;
-
-	uint8_t *memoria = mem;
     uint8_t posicao = 0x00;
 
-	// MOV R1, 0xFF  (resultado padrão = não encontrado)
-    mem[posicao]=0x05; mem[posicao+1]=0x01; mem[posicao+2]=0xFF; posicao+=3;
+    //setup inicial
+    mem[posicao+0] = 0x05; mem[posicao+1] = 0x00; mem[posicao+2] = 0x01;  // MOV R0, 1 (incremento) 
+    mem[posicao+3] = 0x05; mem[posicao+4] = 0x01; mem[posicao+5] = 0x10;  // MOV R1, 16 (início: 0x10)    
+    mem[posicao+6] = 0x05; mem[posicao+7] = 0x02; mem[posicao+8] = 0x18;  // MOV R2, 24 (fim: 0x18)    
+    mem[posicao+9] = 0x05; mem[posicao+10] = 0x03; mem[posicao+11] = 56;    // MOV R3, 56 (valor para preencher)    
 
-    // LOAD R0, 0x08  (carrega alvo)
-    mem[posicao]=0x01; mem[posicao+1]=0x00; mem[posicao+2]=0x08; posicao+=3;
+    //Loop de preenchimento
+    mem[posicao+12] = 0x07; mem[posicao+13] = 0x18; mem[posicao+14] = 0x00; // JMP 0x18    
 
-	//posicao = 6
-	uint8_t salvar = posicao; // = 0x06
-    for (int i = 0; i < 8; i++) {
-        // LOAD R2, 0x10+i
-        mem[posicao]=0x01; mem[posicao+1]=0x02; mem[posicao+2]=0x10+i; posicao+=3;
+    mem[posicao+24] = 0x02; mem[posicao+25] = 0x01; mem[posicao+26] = 0x1D; // STORE R1, 0x1D    
+    
+    mem[posicao+27] = 0x02; mem[posicao+28] = 0x03; mem[posicao+29] = 0x00; // STORE R3    
+    mem[posicao+30] = 0x03; mem[posicao+31] = 0x01; mem[posicao+32] = 0x00; // ADD R1, R0    
 
-        // CMP R2, R0
-        mem[posicao]=0x06; mem[posicao+1]=0x02; mem[posicao+2]=0x00; posicao+=3;
-		
-        // JZ para bloco "encontrou i" (vem depois de todos os 8 blocos)
-        uint8_t jz_target = salvar + 8*9 + i*6; // posição do "encontrou i"
-        mem[posicao]=0x08; mem[posicao+1]=jz_target; mem[posicao+2]=0x00; posicao+=3;
-    }
+    //Verifica se terminou
+    mem[posicao+33] = 0x06; mem[posicao+34] = 0x01; mem[posicao+35] = 0x02; // CMP R1, R2    
+    mem[posicao+36] = 0x09; mem[posicao+37] = 0x18; mem[posicao+38] = 0x00; // JNZ 0x18 (Volta se não for 24)    
 
+
+    
+    mem[posicao+39] = 0x0A; // HALT após preencher
 
 
 }
