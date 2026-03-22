@@ -55,25 +55,31 @@ void linearSearch(void){
     uint8_t posicao = 0x00;
 
     //setup inicial
-    mem[posicao+0] = MOV; mem[posicao+1] = R0; mem[posicao+2] = 0x01;  // MOV R0, 1 (incremento) 
-    mem[posicao+3] = MOV; mem[posicao+4] = R1; mem[posicao+5] = 0x10;  // MOV R1, 16 (início: 0x10)    
-    mem[posicao+6] = MOV; mem[posicao+7] = R2; mem[posicao+8] = 0x18;  // MOV R2, 24 (fim: 0x18)    
-    mem[posicao+9] = MOV; mem[posicao+10] = R3; mem[posicao+11] = 56;    // MOV R3, 56 (valor para preencher)    
+    mem[posicao+0] = MOV; mem[posicao+1] = R0; mem[posicao+2] = 0x01;  // incremento de 1
+    mem[posicao+3] = MOV; mem[posicao+4] = R1; mem[posicao+5] = 0x10;  // inicio array    
+    mem[posicao+6] = MOV; mem[posicao+7] = R2; mem[posicao+8] = 0x18;  // fim array     
+    mem[posicao+9] = MOV; mem[posicao+10] = R3; mem[posicao+11] = 0x37;    // valor para preencher    
+
+    mem[posicao+12] = JMP; mem[posicao+13] = posicao+24; mem[posicao+14] = 0x00;     
 
     //Loop de preenchimento
-    mem[posicao+12] = JMP; mem[posicao+13] = posicao+24; mem[posicao+14] = 0x00; // JMP 0x18    
+    mem[posicao+24] = STORE; mem[posicao+25] = R3; mem[posicao+26] = R1; // salva o valores no array
 
-    mem[posicao+24] = STORE; mem[posicao+25] = R1; mem[posicao+26] = 0x1D; // STORE R1, 0x1D    
-    
-    mem[posicao+27] = STORE; mem[posicao+28] = R3; mem[posicao+29] = 0x00; // STORE R3    
-    mem[posicao+30] = ADD; mem[posicao+31] = R1; mem[posicao+32] = R0; // ADD R1, R0    
+    mem[posicao+27] = ADD; mem[posicao+28] = R1; mem[posicao+29] = R0; 
+    mem[posicao+30] = ADD; mem[posicao+31] = R3; mem[posicao+32] = R0;  
 
     //Verifica se terminou
-    mem[posicao+33] = CMP; mem[posicao+34] = R1; mem[posicao+35] = R2; // CMP R1, R2    
-    mem[posicao+36] = JNZ; mem[posicao+37] = 0x18; mem[posicao+38] = 0x00; // JNZ 0x18 (Volta se não for 24)    
+    mem[posicao+33] = CMP; mem[posicao+34] = R1; mem[posicao+35] = R2;     
+    mem[posicao+36] = JNZ; mem[posicao+37] = posicao+24; mem[posicao+38] = 0x00; // volta pro loop    
+    //Finaliza loop
 
+    //valor para verificar
+    mem[posicao+39] = MOV; mem[posicao+40] = R0; mem[posicao+41] = 0x38; 
+    mem[posicao+42] = STORE; mem[posicao+43] = R0; mem[posicao+44] = 0x08;
     
-    mem[posicao+39] = 0x0A; // HALT após preencher
+
+    mem[posicao] = HALT; // HALT após preencher
+
 
 
 }
