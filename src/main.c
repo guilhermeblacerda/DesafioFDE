@@ -13,16 +13,16 @@ void fetch(uint8_t *op,uint8_t *a,uint8_t *b){
 
 void decode_execute(uint8_t op,uint8_t a,uint8_t b){
 	switch (op) {
-		case 0x01: rg[a] = mem[b]; break;
-		case 0x02: mem[b]= rg[a]; break;
-		case 0x03: rg[a] = rg[a] + rg[b]; break;
-		case 0x04: rg[a] = rg[a] - rg[b]; break;
-		case 0x05: rg[a] = b; break;
-		case 0x06: flag = (rg[a] == rg[b]) ? 1 : 0; break;
-		case 0x07: pc = a; break;
-		case 0x08: if(flag) pc = a; break;
-		case 0x09: if(!flag) pc = a; break;
-		case 0x0A: running = 0; break;
+		case 0x01: rg[a] = mem[b]; break;                 // LOAD  
+        case 0x02: mem[b] = rg[a]; break;                 // STORE 
+        case 0x03: rg[a] = rg[a] + rg[b]; break;          // ADD 
+        case 0x04: rg[a] = rg[a] - rg[b]; break;          // SUB  
+        case 0x05: rg[a] = b; break;                      // MOV 
+        case 0x06: flag = (rg[a] == rg[b]) ? 1 : 0; break;// CMP 
+        case 0x07: pc = a; break;                         // JMP  
+        case 0x08: if(flag) pc = a; break;                // JZ   
+        case 0x09: if(!flag) pc = a; break;               // JNZ  
+        case 0x0A: running = 0; break;                    // HALT
 	}
 }
 
@@ -37,11 +37,21 @@ void trace(uint8_t op, uint8_t a, uint8_t b) {
 }
 
 void linearSearch(void){
-	mem[0x00] = 0x05; mem[0x01] = 0x00; mem[0x02] = 0x10;
-	mem[0x03] = 0x05; mem[0x04] = 0x01; mem[0x05] = 0x00;
-	
-	mem[0x06] = 0x02; mem[0x07] = rg[0x01]; mem[0x08] = rg[0x02];
+	mem[0x08] = 56;                        
+    mem[0x10] = 12; mem[0x11] = 34; mem[0x12] = 56; mem[0x13] = 78;
+	mem[0x14] = 90; mem[0x15] = 11; mem[0x16] = 22; mem[0x17] = 33;
 
+	uint8_t *memoria = mem;
+    uint8_t posicao = 0x00;
+
+	// MOV R1, 0xFF  (resultado padrão = não encontrado)
+    mem[posicao]=0x05; mem[posicao+1]=0x01; mem[posicao+2]=0xFF; posicao+=3;
+
+    // LOAD R0, 0x08  (carrega alvo)
+    mem[posicao]=0x01; mem[posicao+1]=0x00; mem[posicao+2]=0x08; posicao+=3;
+
+	//posicao = 6
+	
 
 }
 
