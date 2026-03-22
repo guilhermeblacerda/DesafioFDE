@@ -51,7 +51,20 @@ void linearSearch(void){
     mem[posicao]=0x01; mem[posicao+1]=0x00; mem[posicao+2]=0x08; posicao+=3;
 
 	//posicao = 6
-	
+	uint8_t salvar = posicao; // = 0x06
+    for (int i = 0; i < 8; i++) {
+        // LOAD R2, 0x10+i
+        mem[posicao]=0x01; mem[posicao+1]=0x02; mem[posicao+2]=0x10+i; posicao+=3;
+
+        // CMP R2, R0
+        mem[posicao]=0x06; mem[posicao+1]=0x02; mem[posicao+2]=0x00; posicao+=3;
+		
+        // JZ para bloco "encontrou i" (vem depois de todos os 8 blocos)
+        uint8_t jz_target = salvar + 8*9 + i*6; // posição do "encontrou i"
+        mem[posicao]=0x08; mem[posicao+1]=jz_target; mem[posicao+2]=0x00; posicao+=3;
+    }
+
+
 
 }
 
