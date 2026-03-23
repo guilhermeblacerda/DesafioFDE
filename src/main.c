@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-uint8_t mem[255] = {0};
+uint8_t mem[256] = {0};
 uint8_t rg[4] = {0};
 uint8_t flag = 0,pc = 0, running = 1,ciclo = 0;
 
@@ -77,24 +77,42 @@ void linearSearch(void){
     mem[posicao+39] = MOV; mem[posicao+40] = R0; mem[posicao+41] = 0x38; 
     mem[posicao+42] = STORE; mem[posicao+43] = R0; mem[posicao+44] = 0x08;
 
+    // setup para busca
+    mem[posicao+45] = MOV;   mem[posicao+46] = R0; mem[posicao+47] = 0x10; // inicio do array
+    mem[posicao+48] = MOV;   mem[posicao+49] = R1; mem[posicao+50] = 0x18; // fim do array
+    mem[posicao+51] = MOV;  mem[posicao+52] = R2; mem[posicao+53] = 0x00; // indice
+    mem[posicao+54] = LOAD; mem[posicao+55] = R3; mem[posicao+56] = 0x08; // alvo
+
     // loop principal de busca
-    mem[posicao+45] = MOV;   mem[posicao+46] = R1; mem[posicao+47] = 0x10;
-    mem[posicao+48] = LOAD;  mem[posicao+49] = R0; mem[posicao+50] = 0x08; 
+    mem[posicao+57] = LOAD; mem[posicao+58] = R0; mem[posicao+59] = R0; 
 
-    mem[posicao+51] = LOAD;  mem[posicao+52] = R3; mem[posicao+53] = R1;   
-    mem[posicao+54] = CMP;   mem[posicao+55] = R3; mem[posicao+56] = R0;   
-    mem[posicao+57] = JZ;    mem[posicao+58] = posicao+69; mem[posicao+59] = 0x00; 
+    mem[posicao+60] = CMP; mem[posicao+61] = R0; mem[posicao+62] = R3; 
+    mem[posicao+63] = JZ;  mem[posicao+64] = posicao+75; mem[posicao+65] = 0x00; 
 
-    mem[posicao+60] = ADD;   mem[posicao+61] = R1; mem[posicao+62] = 0x01; 
-    mem[posicao+63] = CMP;   mem[posicao+64] = R1; mem[posicao+65] = R2;   
-    mem[posicao+66] = JNZ;   mem[posicao+67] = posicao+51; mem[posicao+68] = 0x00; 
-    // fim do loop de busca 
+    // verifica fim
+    mem[posicao+66] = CMP; mem[posicao+67] = R1; mem[posicao+68] = R0;
+    mem[posicao+69] = JZ;  mem[posicao+70] = posicao+84; mem[posicao+71] = 0x00; // não achou
 
-    mem[posicao+69] = HALT;   mem[posicao+70] = 0x00; mem[posicao+71] = 0x00;
+    mem[posicao+72] = ADD; mem[posicao+73] = R0; mem[posicao+74] = 0x01;
+
+    mem[posicao+75] = ADD; mem[posicao+76] = R2; mem[posicao+77] = 0x01;
+
+    mem[posicao+78] = JMP; mem[posicao+79] = posicao+57; mem[posicao+80] = 0x00;
+    // finaliza loop
+
+    // achou
+    mem[posicao+81] = STORE; mem[posicao+82] = R2; mem[posicao+83] = 0x20;
+    mem[posicao+84] = HALT; mem[posicao+85] = 0x00; mem[posicao+86] = 0x00;
+
+    // nao achou
+    mem[posicao+87] = MOV; mem[posicao+88] = R0; mem[posicao+89] = 0xFF;
+    mem[posicao+90] = STORE; mem[posicao+91] = R0; mem[posicao+92] = 0x20;
+    mem[posicao+93] = HALT; mem[posicao+94] = 0x00; mem[posicao+95] = 0x00;
 
 }
 
 int main(int argc,char *argv[]){
+    linearSearch();
 
 	while (running && pc < 255) {
 		uint8_t op,a,b;
