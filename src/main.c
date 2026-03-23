@@ -63,6 +63,7 @@ void linearSearch(void){
     mem[posicao+12] = JMP; mem[posicao+13] = posicao+24; mem[posicao+14] = 0x00;     
 
     //Loop de preenchimento
+
     mem[posicao+24] = STORE; mem[posicao+25] = R3; mem[posicao+26] = R1; // salva o valores no array
 
     mem[posicao+27] = ADD; mem[posicao+28] = R1; mem[posicao+29] = R0; 
@@ -70,44 +71,46 @@ void linearSearch(void){
 
     //Verifica se terminou
     mem[posicao+33] = CMP; mem[posicao+34] = R1; mem[posicao+35] = R2;     
-    mem[posicao+36] = JNZ; mem[posicao+37] = posicao+24; mem[posicao+38] = 0x00; // volta pro loop    
+    mem[posicao+36] = JNZ; mem[posicao+37] = posicao+24; mem[posicao+38] = 0x00; // volta pro loop 
     //Finaliza loop
 
-    //valor para verificar
     mem[posicao+39] = MOV; mem[posicao+40] = R0; mem[posicao+41] = 0x38; 
     mem[posicao+42] = STORE; mem[posicao+43] = R0; mem[posicao+44] = 0x08;
 
     // setup para busca
-    mem[posicao+45] = MOV;   mem[posicao+46] = R0; mem[posicao+47] = 0x10; // inicio do array
-    mem[posicao+48] = MOV;   mem[posicao+49] = R1; mem[posicao+50] = 0x18; // fim do array
-    mem[posicao+51] = MOV;  mem[posicao+52] = R2; mem[posicao+53] = 0x00; // indice
-    mem[posicao+54] = LOAD; mem[posicao+55] = R3; mem[posicao+56] = 0x08; // alvo
+    mem[posicao+45] = MOV; mem[posicao+46] = R0; mem[posicao+47] = 0x00; // índice
+    mem[posicao+48] = MOV; mem[posicao+49] = R1; mem[posicao+50] = 0x10; // ponteiro
+    mem[posicao+51] = LOAD; mem[posicao+52] = R3; mem[posicao+53] = 0x08; // valor buscado
 
-    // loop principal de busca
-    mem[posicao+57] = LOAD; mem[posicao+58] = R0; mem[posicao+59] = R0; 
+    mem[posicao+54] = MOV; mem[posicao+55] = R2; mem[posicao+56] = 0x01; // constante 1
 
-    mem[posicao+60] = CMP; mem[posicao+61] = R0; mem[posicao+62] = R3; 
-    mem[posicao+63] = JZ;  mem[posicao+64] = posicao+75; mem[posicao+65] = 0x00; 
+    // LOOP DE BUSCA
+    mem[posicao+57] = LOAD; mem[posicao+58] = R2; mem[posicao+59] = R1;
 
-    // verifica fim
-    mem[posicao+66] = CMP; mem[posicao+67] = R1; mem[posicao+68] = R0;
-    mem[posicao+69] = JZ;  mem[posicao+70] = posicao+84; mem[posicao+71] = 0x00; // não achou
+    // compara valor com o buscado
+    mem[posicao+60] = CMP; mem[posicao+61] = R2; mem[posicao+62] = R3;
+    mem[posicao+63] = JZ;  mem[posicao+64] = posicao+80; mem[posicao+65] = 0x00;
 
-    mem[posicao+72] = ADD; mem[posicao+73] = R0; mem[posicao+74] = 0x01;
+    // incrementa ponteiro (R1++)
+    mem[posicao+66] = ADD; mem[posicao+67] = R1; mem[posicao+68] = R2;
 
-    mem[posicao+75] = ADD; mem[posicao+76] = R2; mem[posicao+77] = 0x01;
+    // incrementa índice (R0++)
+    mem[posicao+69] = ADD; mem[posicao+70] = R0; mem[posicao+71] = R2;
 
-    mem[posicao+78] = JMP; mem[posicao+79] = posicao+57; mem[posicao+80] = 0x00;
-    // finaliza loop
+    // verifica fim do array
+    mem[posicao+72] = MOV; mem[posicao+73] = R2; mem[posicao+74] = 0x18;
+    mem[posicao+75] = CMP; mem[posicao+76] = R1; mem[posicao+77] = R2;
+    mem[posicao+78] = JNZ; mem[posicao+79] = posicao+57; mem[posicao+80] = 0x00;
 
-    // achou
-    mem[posicao+81] = STORE; mem[posicao+82] = R2; mem[posicao+83] = 0x20;
-    mem[posicao+84] = HALT; mem[posicao+85] = 0x00; mem[posicao+86] = 0x00;
+    // NÃO ENCONTRADO
+    mem[posicao+81] = MOV; mem[posicao+82] = R2; mem[posicao+83] = 0xFF;
+    mem[posicao+84] = STORE; mem[posicao+85] = R2; mem[posicao+86] = 0x20;
+    mem[posicao+87] = HALT; mem[posicao+88] = 0x00; mem[posicao+89] = 0x00;
 
-    // nao achou
-    mem[posicao+87] = MOV; mem[posicao+88] = R0; mem[posicao+89] = 0xFF;
-    mem[posicao+90] = STORE; mem[posicao+91] = R0; mem[posicao+92] = 0x20;
-    mem[posicao+93] = HALT; mem[posicao+94] = 0x00; mem[posicao+95] = 0x00;
+    // ENCONTRADO
+    mem[posicao+80] = STORE; mem[posicao+81] = R0; mem[posicao+82] = 0x20;
+    mem[posicao+83] = HALT; mem[posicao+84] = 0x00; mem[posicao+85] = 0x00;
+
 
 }
 
@@ -122,5 +125,10 @@ int main(int argc,char *argv[]){
 		trace(op,a,b);
 	}
 
+    printf("\nResultado: ");
+    if(mem[0x20] == 0xFF)
+        printf("valor nao encontrado\n");
+    else
+        printf("valor encontrado no indice %d\n", mem[0x20]);
 
 };
