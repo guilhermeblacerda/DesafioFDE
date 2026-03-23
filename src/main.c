@@ -127,7 +127,7 @@ int main(int argc,char *argv[]){
 		trace(op,a,b);
 	}
 
-	printf("%d\n",mem[0x20]);
-	printf("%d\n",mem[0xFF]);
+	printf("indice: %d\n",mem[0x20]);
+	printf("valor: %d\n",mem[0xFF]);
 
 };
